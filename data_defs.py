@@ -66,4 +66,48 @@ FEATURE_NAMES = [
 #--------
 phase= Literal["preclinical", "phase1","phase2","phase3","nda_bla","approved"]
 PHASES = ("preclinical", "phase1","phase2","phase3","nda_bla","approved")
-               
+
+
+#-------
+#indication = one of twenty therapeutica groups 
+#-------
+INDICATIONS = (
+    "Allergy", "Autoimmune/immunology", "Cardiovascular", "Dermatology",
+    "ENT/Dental", "Endocrine", "Gastroenterology", "Hematology",
+    "Infectious Disease", "Metabolic", "Neurology", "Obstetrics/Gynecology",
+    "Oncology", "Ophthalmology", "Orthopedics", "Psychiatry", "Renal",
+    "Respiratory", "Rheumatology", "Urology",
+)
+inidcation = str # must be one of INDICATIONS 
+
+
+#-------------
+#Trial= (phase, indication)
+#one clinical trial record after cleaning. 
+#phase tells use the phase of the drug cycle 
+#inidaction tells us the therapeutic category, must be one of the indications 
+#-------------
+@dataclass(frozen=True)
+class trial:
+    phase:optional[phase]    
+    indication:Optional[Indication]
+
+#-------------
+# Pipeline = {ticker, year, phase_counts, indication_share}   Structure
+#   phase_counts     : dict[Phase, int]        how many drugs in each stage
+#   indication_share : dict[Indication, float] fraction of drugs per group,
+#                      shares sum to 1.0 (or dict is empty if no drugs)
+# Rules carried by this definition (Xu, Section 2.2.3):
+#   INDICATION_CUTOFF = 0.75  -> a company "belongs" to a group only if at
+#                                least 75% of its drugs are in that group
+#   SIZE_PERCENTILE   = 75    -> Big = total assets >= 75th percentile
+#--------------
+INDCATION_CUTOFF= 0.75 
+SIZE_PERCENTILE= 75 
+
+dataclass
+class pipeline:
+    ticker: str 
+    year:int 
+    pahse_counts: dict= field(default_factory=dict)
+    indication_share:dict= field(default_factory=dict)
