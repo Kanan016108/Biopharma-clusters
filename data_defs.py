@@ -111,3 +111,47 @@ class pipeline:
     year:int 
     pahse_counts: dict= field(default_factory=dict)
     indication_share:dict= field(default_factory=dict)
+
+#-----------------
+#assignment =dict[ticker,cluster_name]
+#cluster_name is a str so that "0", "1", "oncology","Big oncology" all work with the same code evaluation 
+# eg ()"VRTX": "0","PFE":"1")
+#-------
+Assignment = dict
+
+#-----------------
+# CorrSummary = {"within":  dict[cluster, float],
+#                "between": dict[(cluster_a, cluster_b), float],
+#                "n":       dict[cluster, int]}                    Structure
+# Mean pairwise monthly-return correlation inside each cluster, and between
+# each pair of clusters, plus the member count of every cluster.
+# Rules carried by this definition:
+#   SCORING WINDOW: an Assignment built from fiscal-year t data is scored on
+#     returns from April t+1 to March t+2. Annual reports for year t are
+#     filed by end of March t+1, so anything earlier is look-ahead bias.
+#   MIN_CLUSTER_SIZE = 5: a cluster with fewer members is reported in "n"
+#     but EXCLUDED from "within" and "between", because a correlation
+#     averaged over 1-6 pairs is noise, not evidence.
+#-----------------
+MIN_CLUSTER_SIZE=5 
+SCORING_START_MONTH=4 
+SCORING_MONTHS=12 
+CorrSummary= dict
+
+#-------------
+#portfoliostats= (cluster,year,n,beta,sharpe) Structure
+#Equal-weighted portfolio of one cluster in one year 
+#-------------
+@dataclass(frozen=True)
+class portfoliostats:
+    cluster: str 
+    year: int 
+    n: int 
+    beta :Optional [float]
+    sharpe : Optional [float]
+
+if __name__== "__main__":
+    import doctest
+    doctest.testmod()
+    print("doctests finished")
+    
